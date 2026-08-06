@@ -1,1 +1,33 @@
-https://github.com/csmcmrtc/csmcmrtc/new/main?filename=.github%2Fworkflows%2Fblank.yml&workflow_template=ci%2Fblank
+name: Reorganize CSM Folders
+on:
+  workflow_dispatch:
+jobs:
+  reorganize:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Reorganize folders
+        run: |
+          rm -rf CSM-A CSM-B CSM-C CSM-D
+          for i in {1..23}; do
+            mkdir -p "Major Project 2023 to 2027/CSM-A/A-$i"
+            touch "Major Project 2023 to 2027/CSM-A/A-$i/.gitkeep"
+            mkdir -p "Major Project 2023 to 2027/CSM-B/B-$i"
+            touch "Major Project 2023 to 2027/CSM-B/B-$i/.gitkeep"
+            mkdir -p "Major Project 2023 to 2027/CSM-C/C-$i"
+            touch "Major Project 2023 to 2027/CSM-C/C-$i/.gitkeep"
+            mkdir -p "Major Project 2023 to 2027/CSM-D/D-$i"
+            touch "Major Project 2023 to 2027/CSM-D/D-$i/.gitkeep"
+          done
+      - name: Commit and push
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "."
+          git push
+
+in this change the floder name Major Project 2023 to 2027 to Industrial oriented mini project 2026-2027
