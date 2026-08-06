@@ -16,20 +16,20 @@ jobs:
 
       - name: Reorganize folders
         run: |
-          rm -rf "Industrial oriented mini project 2026-2027"
+          rm -rf "Major Project 2023-2027"
 
           for i in {1..23}; do
-            mkdir -p "Industrial oriented mini project 2026-2027/CSM-A/A-$i"
-            touch "Industrial oriented mini project 2026-2027/CSM-A/A-$i/.gitkeep"
+            mkdir -p "Major Project 2023-2027/CSM-A/A-$i"
+            touch "Major Project 2023-2027/CSM-A/A-$i/.gitkeep"
 
-            mkdir -p "Industrial oriented mini project 2026-2027/CSM-B/B-$i"
-            touch "Industrial oriented mini project 2026-2027/CSM-B/B-$i/.gitkeep"
+            mkdir -p "Major Project 2023-2027/CSM-B/B-$i"
+            touch "Major Project 2023-2027/CSM-B/B-$i/.gitkeep"
 
-            mkdir -p "Industrial oriented mini project 2026-2027/CSM-C/C-$i"
-            touch "Industrial oriented mini project 2026-2027/CSM-C/C-$i/.gitkeep"
+            mkdir -p "Major Project 2023-2027/CSM-C/C-$i"
+            touch "Major Project 2023-2027/CSM-C/C-$i/.gitkeep"
 
-            mkdir -p "Industrial oriented mini project 2026-2027/CSM-D/D-$i"
-            touch "Industrial oriented mini project 2026-2027/CSM-D/D-$i/.gitkeep"
+            mkdir -p "Major Project 2023-2027/CSM-D/D-$i"
+            touch "Major Project 2023-2027/CSM-D/D-$i/.gitkeep"
           done
 
       - name: Commit and push
@@ -42,6 +42,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Create Industrial oriented mini project 2026-2027 folders"
+            git commit -m "Create folders"
             git push
           fi
