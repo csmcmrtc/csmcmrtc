@@ -1,0 +1,221 @@
+/* src/styles/colors.css - Professional Company-Grade Colors */
+:root {
+  /* === PRIMARY COLORS (Professional Blue - Similar to Stripe/LinkedIn) === */
+  --primary-50: #f0f9ff;
+  --primary-100: #e0f2fe;
+  --primary-200: #bae6fd;
+  --primary-300: #7dd3fc;
+  --primary-400: #38bdf8;
+  --primary-500: #0ea5e9;  /* Main brand - Professional blue */
+  --primary-600: #0284c7;
+  --primary-700: #0369a1;
+  --primary-800: #075985;
+  --primary-900: #0c4a6e;
+
+  /* === SECONDARY/NEUTRAL GRAYS (GitHub/Notion style) === */
+  --gray-50: #fafafa;
+  --gray-100: #f4f4f5;
+  --gray-200: #e4e4e7;
+  --gray-300: #d4d4d8;
+  --gray-400: #a1a1aa;
+  --gray-500: #71717a;
+  --gray-600: #52525b;
+  --gray-700: #3f3f46;
+  --gray-800: #27272a;
+  --gray-900: #18181b;
+
+  /* === SUCCESS COLORS (Professional Green - Slack/WhatsApp style) === */
+  --success-50: #f0fdf4;
+  --success-100: #dcfce7;
+  --success-200: #bbf7d0;
+  --success-300: #86efac;
+  --success-400: #4ade80;
+  --success-500: #10b981;  /* Professional green */
+  --success-600: #059669;
+  --success-700: #047857;
+  --success-800: #065f46;
+  --success-900: #064e3b;
+
+  /* === ERROR COLORS (Professional Red - Not too harsh) === */
+  --error-50: #fef2f2;
+  --error-100: #fee2e2;
+  --error-200: #fecaca;
+  --error-300: #fca5a5;
+  --error-400: #f87171;
+  --error-500: #dc2626;  /* Professional red */
+  --error-600: #b91c1c;
+  --error-700: #991b1b;
+  --error-800: #7f1d1d;
+  --error-900: #6b1d1d;
+
+  /* === WARNING COLORS (Professional Amber - Microsoft/Google style) === */
+  --warning-50: #fffbeb;
+  --warning-100: #fef3c7;
+  --warning-200: #fde68a;
+  --warning-300: #fcd34d;
+  --warning-400: #fbbf24;
+  --warning-500: #d97706;  /* Professional amber */
+  --warning-600: #b45309;
+  --warning-700: #92400e;
+  --warning-800: #78350f;
+  --warning-900: #5b2c0d;
+
+  /* === INFO COLORS (Softer Blue) === */
+  --info-50: #eff6ff;
+  --info-100: #dbeafe;
+  --info-200: #bfdbfe;
+  --info-300: #93c5fd;
+  --info-400: #60a5fa;
+  --info-500: #2563eb;
+  --info-600: #1d4ed8;
+  --info-700: #1e40af;
+  --info-800: #1e3a8a;
+  --info-900: #172554;
+
+  /* === BACKGROUND COLORS (Professional & Clean) === */
+  --bg-white: #ffffff;
+  --bg-gray-50: #fafafa;
+  --bg-gray-100: #f4f4f5;
+  --bg-gray-900: #18181b;
+
+  /* === TEXT COLORS (High Contrast & Accessible) === */
+  --text-primary: #18181b;      /* Almost black */
+  --text-secondary: #52525b;    /* Medium gray */
+  --text-tertiary: #a1a1aa;     /* Light gray */
+  --text-inverse: #ffffff;      /* White */
+
+  /* === CUSTOM APP COLORS (JustSearch specific) === */
+  --color-savings: #10b981;     /* Success green */
+  --color-expensive: #dc2626;   /* Error red */
+  --color-nearby: #0ea5e9;      /* Primary blue */
+  --color-delivery: #d97706;    /* Warning amber */
+  --color-discount: #7c3aed;    /* Purple accent */
+  --color-premium: #1f2937;     /* Dark premium */
+
+  /* === ACCENT COLORS (Modern & Professional) === */
+  --accent-purple: #7c3aed;     /* Violet */
+  --accent-pink: #db2777;       /* Rose */
+  --accent-teal: #0d9488;       /* Teal */
+  --accent-orange: #ea580c;     /* Orange */
+  --accent-indigo: #4338ca;     /* Indigo */
+
+  /* === BORDER COLORS === */
+  --border-light: #e4e4e7;      /* Light border */
+  --border-medium: #d4d4d8;     /* Medium border */
+  --border-dark: #a1a1aa;       /* Dark border */
+  --border-focus: #0ea5e9;      /* Focus border (primary) */
+
+  /* === SHADOW COLORS === */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-white: #18181b;
+    --bg-gray-50: #27272a;
+    --bg-gray-100: #3f3f46;
+    --text-primary: #ffffff;
+    --text-secondary: #d4d4d8;
+    --text-tertiary: #a1a1aa;
+    --border-light: #3f3f46;
+    --border-medium: #52525b;
+  }
+}
+
+/* Professional utility classes */
+@layer utilities {
+  /* Background colors */
+  .bg-brand { background-color: var(--primary-500) !important; }
+  .bg-success { background-color: var(--success-500) !important; }
+  .bg-error { background-color: var(--error-500) !important; }
+  .bg-warning { background-color: var(--warning-500) !important; }
+  .bg-info { background-color: var(--info-500) !important; }
+  
+  /* Custom app backgrounds */
+  .bg-savings { background-color: var(--color-savings) !important; }
+  .bg-expensive { background-color: var(--color-expensive) !important; }
+  .bg-nearby { background-color: var(--color-nearby) !important; }
+  .bg-delivery { background-color: var(--color-delivery) !important; }
+  .bg-discount { background-color: var(--color-discount) !important; }
+  .bg-premium { background-color: var(--color-premium) !important; }
+
+  /* Text colors */
+  .text-brand { color: var(--primary-500) !important; }
+  .text-success { color: var(--success-500) !important; }
+  .text-error { color: var(--error-500) !important; }
+  .text-warning { color: var(--warning-500) !important; }
+  .text-info { color: var(--info-500) !important; }
+  
+  /* Custom text colors */
+  .text-savings { color: var(--color-savings) !important; }
+  .text-expensive { color: var(--color-expensive) !important; }
+  .text-nearby { color: var(--color-nearby) !important; }
+  .text-delivery { color: var(--color-delivery) !important; }
+  .text-discount { color: var(--color-discount) !important; }
+  .text-premium { color: var(--color-premium) !important; }
+
+  /* Border colors */
+  .border-brand { border-color: var(--primary-500) !important; }
+  .border-success { border-color: var(--success-500) !important; }
+  .border-error { border-color: var(--error-500) !important; }
+  .border-light { border-color: var(--border-light) !important; }
+
+  /* Professional shadows */
+  .shadow-soft { box-shadow: var(--shadow-sm) !important; }
+  .shadow-medium { box-shadow: var(--shadow-md) !important; }
+  .shadow-strong { box-shadow: var(--shadow-lg) !important; }
+
+  /* Professional buttons */
+  .btn-primary {
+    background-color: var(--primary-500);
+    color: var(--text-inverse);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .btn-primary:hover {
+    background-color: var(--primary-600);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-secondary {
+    background-color: var(--bg-gray-100);
+    color: var(--text-primary);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    border: 1px solid var(--border-light);
+    cursor: pointer;
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--gray-200);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Professional cards */
+  .card-professional {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-light);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .card-professional:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+}
