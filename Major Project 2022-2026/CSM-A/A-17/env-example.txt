@@ -1,0 +1,11 @@
+# Environment Variables Example
+# Copy this file to .env.local and fill in your actual values
+
+# MongoDB Connection
+MONGODB_URI=mongodb://localhost:27017/agroconnect
+
+# JWT Secret (generate a strong random string)
+JWT_SECRET=your-super-secret-jwt-key-here
+
+# NextAuth Secret (optional, if using NextAuth)
+NEXTAUTH_SECRET=your-nextauth-secret-here

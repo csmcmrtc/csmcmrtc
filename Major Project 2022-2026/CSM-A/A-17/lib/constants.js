@@ -1,0 +1,47 @@
+export const TELANGANA_DISTRICTS = [
+  "Adilabad",
+  "Bhadradri Kothagudem",
+  "Hanumakonda",
+  "Hyderabad",
+  "Jagtial",
+  "Jangaon",
+  "Jayashankar Bhupalpally",
+  "Jogulamba Gadwal",
+  "Kamareddy",
+  "Karimnagar",
+  "Khammam",
+  "Kumuram Bheem",
+  "Mahabubabad",
+  "Mahabubnagar",
+  "Mancherial",
+  "Medak",
+  "Medchal-Malkajgiri",
+  "Mulugu",
+  "Nagarkurnool",
+  "Nalgonda",
+  "Narayanpet",
+  "Nirmal",
+  "Nizamabad",
+  "Peddapalli",
+  "Rajanna Sircilla",
+  "Rangareddy",
+  "Sangareddy",
+  "Siddipet",
+  "Suryapet",
+  "Vikarabad",
+  "Wanaparthy",
+  "Warangal",
+  "Yadadri Bhuvanagiri",
+]
+
+export const USER_ROLES = {
+  FARMER: "farmer",
+  WHOLESALER: "wholesaler",
+  ADMIN: "admin",
+}
+
+export const REQUEST_STATUS = {
+  PENDING: "pending",
+  APPROVED: "approved",
+  REJECTED: "rejected",
+}
