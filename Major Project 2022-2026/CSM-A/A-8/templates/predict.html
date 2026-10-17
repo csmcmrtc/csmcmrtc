@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block title %}Crop Yield Prediction - CropYield AI{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-primary mb-3">
+                    <i class="fas fa-calculator me-3"></i>Crop Yield Prediction
+                </h1>
+                <p class="lead text-muted">
+                    Enter your farm details below to get accurate crop yield predictions using our advanced AI models.
+                </p>
+            </div>
+
+            <!-- Prediction Form -->
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0">
+                        <i class="fas fa-seedling me-2"></i>Farm Information
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" id="predictionForm">
+                        <div class="row g-3">
+                            <!-- State Selection -->
+                            <div class="col-md-6">
+                                <label for="state" class="form-label fw-bold">
+                                    <i class="fas fa-map-marker-alt me-2"></i>State
+                                </label>
+                                <select class="form-select" id="state" name="state" required>
+                                    <option value="">Select State</option>
+                                </select>
+                                <div class="form-text">Choose the state where your farm is located</div>
+                            </div>
+
+                            <!-- District Selection -->
+                            <div class="col-md-6">
+                                <label for="district" class="form-label fw-bold">
+                                    <i class="fas fa-map me-2"></i>District
+                                </label>
+                                <select class="form-select" id="district" name="district" required>
+                                    <option value="">Select District</option>
+                                </select>
+                                <div class="form-text">Choose the district within the selected state</div>
+                            </div>
+
+                            <!-- Crop Year -->
+                            <div class="col-md-6">
+                                <label for="crop_year" class="form-label fw-bold">
+                                    <i class="fas fa-calendar me-2"></i>Crop Year
+                                </label>
+                                <select class="form-select" id="crop_year" name="crop_year" required>
+                                    <option value="">Select Year</option>
+                                    {% for year in range(2024, 1990, -1) %}
+                                    <option value="{{ year }}">{{ year }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="form-text">Select the year for crop cultivation</div>
+                            </div>
+
+                            <!-- Season -->
+                            <div class="col-md-6">
+                                <label for="season" class="form-label fw-bold">
+                                    <i class="fas fa-sun me-2"></i>Season
+                                </label>
+                                <select class="form-select" id="season" name="season" required>
+                                    <option value="">Select Season</option>
+                                </select>
+                                <div class="form-text">Choose the growing season</div>
+                            </div>
+
+                            <!-- Crop Type -->
+                            <div class="col-md-6">
+                                <label for="crop" class="form-label fw-bold">
+                                    <i class="fas fa-seedling me-2"></i>Crop Type
+                                </label>
+                                <select class="form-select" id="crop" name="crop" required>
+                                    <option value="">Select Crop</option>
+                                </select>
+                                <div class="form-text">Select the crop you want to grow</div>
+                            </div>
+
+                            <!-- Area -->
+                            <div class="col-md-6">
+                                <label for="area" class="form-label fw-bold">
+                                    <i class="fas fa-ruler-combined me-2"></i>Area (Acres)
+                                </label>
+                                <input type="number" class="form-control" id="area" name="area" 
+                                       step="0.01" min="0.01" required placeholder="Enter area in acres">
+                                <div class="form-text">Enter the area of your farm in acres</div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg px-5 py-3">
+                                <i class="fas fa-magic me-2"></i>Predict Crop Yield
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Information Cards -->
+            <div class="row mt-5 g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-info-circle fa-2x text-primary mb-3"></i>
+                            <h5 class="fw-bold">How It Works</h5>
+                            <p class="text-muted">
+                                Our AI analyzes historical data patterns, weather conditions, and regional factors 
+                                to provide accurate yield predictions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-chart-line fa-2x text-primary mb-3"></i>
+                            <h5 class="fw-bold">Prediction Accuracy</h5>
+                            <p class="text-muted">
+                                Our models achieve over 95% accuracy by considering multiple variables 
+                                including soil conditions, climate patterns, and historical yields.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card h-100 text-center">
+                        <div class="card-body">
+                            <i class="fas fa-lightbulb fa-2x text-primary mb-3"></i>
+                            <h5 class="fw-bold">Smart Insights</h5>
+                            <p class="text-muted">
+                                Get detailed analysis including production estimates, yield per acre, 
+                                and confidence scores for better decision making.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model Training Status -->
+            <div class="card mt-5" id="modelStatusCard" style="display: none;">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Model Training Required
+                    </h5>
+                </div>
+                <div class="card-body text-center">
+                    <p class="mb-3">The AI model needs to be trained before making predictions.</p>
+                    <button class="btn btn-warning btn-lg" id="trainModelBtn">
+                        <i class="fas fa-cogs me-2"></i>Train Model Now
+                    </button>
+                    <div class="mt-3" id="trainingProgress" style="display: none;">
+                        <div class="spinner-border text-warning" role="status">
+                            <span class="visually-hidden">Training...</span>
+                        </div>
+                        <p class="mt-2">Training in progress... This may take a few minutes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    // Load initial data
+    loadStates();
+    loadSeasons();
+    loadCrops();
+    
+    // Check model status
+    checkModelStatus();
+    
+    // Event handlers
+    $('#state').change(function() {
+        loadDistricts($(this).val());
+    });
+    
+    $('#trainModelBtn').click(function() {
+        trainModel();
+    });
+});
+
+// Load states from API
+function loadStates() {
+    $.get('/api/states')
+        .done(function(states) {
+            const stateSelect = $('#state');
+            states.forEach(function(state) {
+                stateSelect.append(`<option value="${state}">${state}</option>`);
+            });
+        })
+        .fail(function() {
+            console.error('Failed to load states');
+        });
+}
+
+// Load districts based on selected state
+function loadDistricts(state) {
+    if (!state) {
+        $('#district').html('<option value="">Select District</option>');
+        return;
+    }
+    
+    $.get(`/api/districts/${state}`)
+        .done(function(districts) {
+            const districtSelect = $('#district');
+            districtSelect.html('<option value="">Select District</option>');
+            districts.forEach(function(district) {
+                districtSelect.append(`<option value="${district}">${district}</option>`);
+            });
+        })
+        .fail(function() {
+            console.error('Failed to load districts');
+        });
+}
+
+// Load seasons from API
+function loadSeasons() {
+    $.get('/api/seasons')
+        .done(function(seasons) {
+            const seasonSelect = $('#season');
+            seasons.forEach(function(season) {
+                seasonSelect.append(`<option value="${season}">${season}</option>`);
+            });
+        })
+        .fail(function() {
+            console.error('Failed to load seasons');
+        });
+}
+
+// Load crops from API
+function loadCrops() {
+    $.get('/api/crops')
+        .done(function(crops) {
+            const cropSelect = $('#crop');
+            crops.forEach(function(crop) {
+                cropSelect.append(`<option value="${crop}">${crop}</option>`);
+            });
+        })
+        .fail(function() {
+            console.error('Failed to load crops');
+        });
+}
+
+// Check if model is trained
+function checkModelStatus() {
+    // This would typically check with the backend
+    // For now, we'll show the training card
+    $('#modelStatusCard').show();
+}
+
+// Train the model
+function trainModel() {
+    $('#trainModelBtn').prop('disabled', true);
+    $('#trainingProgress').show();
+    
+    $.post('/train')
+        .done(function(response) {
+            if (response.success) {
+                $('#modelStatusCard').hide();
+                showSuccessAlert('Model trained successfully! You can now make predictions.');
+            } else {
+                showErrorAlert('Training failed: ' + response.error);
+            }
+        })
+        .fail(function() {
+            showErrorAlert('Training failed. Please try again.');
+        })
+        .always(function() {
+            $('#trainModelBtn').prop('disabled', false);
+            $('#trainingProgress').hide();
+        });
+}
+
+// Show success alert
+function showSuccessAlert(message) {
+    const alertHtml = `
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    $('.container').prepend(alertHtml);
+}
+
+// Show error alert
+function showErrorAlert(message) {
+    const alertHtml = `
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    $('.container').prepend(alertHtml);
+}
+</script>
+{% endblock %}

@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Advanced Techniques for Crop Yield and Field Prediction - Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold mb-4">
+            <i class="fas fa-seedling me-3"></i>
+            Advanced Techniques for Crop Yield and Field Prediction
+        </h1>
+        <p class="lead mb-5">
+            Harness the power of machine learning and artificial intelligence to predict crop yields 
+            with unprecedented accuracy. Optimize your farming decisions and maximize productivity.
+        </p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a href="{{ url_for('predict') }}" class="btn btn-light btn-lg px-5 py-3">
+                <i class="fas fa-calculator me-2"></i>Start Predicting
+            </a>
+            <a href="{{ url_for('about') }}" class="btn btn-outline-light btn-lg px-5 py-3">
+                <i class="fas fa-info-circle me-2"></i>Learn More
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="container mb-5">
+    <div class="row text-center mb-5">
+        <div class="col-12">
+            <h2 class="display-5 fw-bold text-primary mb-3">Why Choose CropYield AI?</h2>
+            <p class="lead text-muted">Cutting-edge technology meets agricultural expertise</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 p-4 text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Advanced AI Models</h4>
+                <p class="text-muted">
+                    State-of-the-art machine learning algorithms including Random Forest, 
+                    Neural Networks, and ensemble methods for superior prediction accuracy.
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 p-4 text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-database"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Comprehensive Data</h4>
+                <p class="text-muted">
+                    Extensive dataset covering multiple states, districts, crops, and seasons 
+                    with historical production data for robust training.
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card h-100 p-4 text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h4 class="fw-bold mb-3">Real-time Insights</h4>
+                <p class="text-muted">
+                    Instant predictions with confidence scores, yield per acre calculations, 
+                    and detailed analysis for informed decision-making.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="container mb-5">
+    <div class="row text-center mb-5">
+        <div class="col-12">
+            <h2 class="display-5 fw-bold text-primary mb-3">How It Works</h2>
+            <p class="lead text-muted">Simple steps to accurate predictions</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card h-100 p-4 text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <h5 class="fw-bold mb-3">1. Input Data</h5>
+                <p class="text-muted">
+                    Enter your farm details including location, crop type, season, and area.
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card h-100 p-4 text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <h5 class="fw-bold mb-3">2. AI Processing</h5>
+                <p class="text-muted">
+                    Our advanced algorithms analyze historical patterns and environmental factors.
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card h-100 p-4 text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <h5 class="fw-bold mb-3">3. Generate Results</h5>
+                <p class="text-muted">
+                    Receive detailed predictions with production estimates and yield per acre.
+                </p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card h-100 p-4 text-center">
+                <div class="feature-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h5 class="fw-bold mb-3">4. Make Decisions</h5>
+                <p class="text-muted">
+                    Use insights to optimize planting, resource allocation, and harvest planning.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="container mb-5">
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="stats-card">
+                <i class="fas fa-seedling fa-2x mb-3"></i>
+                <h3 class="fw-bold">100+</h3>
+                <p class="mb-0">Crop Types</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stats-card">
+                <i class="fas fa-map-marker-alt fa-2x mb-3"></i>
+                <h3 class="fw-bold">500+</h3>
+                <p class="mb-0">Districts</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stats-card">
+                <i class="fas fa-calendar-alt fa-2x mb-3"></i>
+                <h3 class="fw-bold">20+</h3>
+                <p class="mb-0">Years Data</p>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="stats-card">
+                <i class="fas fa-percentage fa-2x mb-3"></i>
+                <h3 class="fw-bold">95%</h3>
+                <p class="mb-0">Accuracy</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="container mb-5">
+    <div class="card bg-primary text-white text-center p-5">
+        <h3 class="fw-bold mb-3">Ready to Optimize Your Crop Production?</h3>
+        <p class="lead mb-4">
+            Join thousands of farmers who are already using AI to make better farming decisions.
+        </p>
+        <a href="{{ url_for('predict') }}" class="btn btn-light btn-lg px-5">
+            <i class="fas fa-rocket me-2"></i>Get Started Now
+        </a>
+    </div>
+</section>
+
+<!-- Technology Stack -->
+<section class="container mb-5">
+    <div class="row text-center mb-4">
+        <div class="col-12">
+            <h3 class="fw-bold text-primary">Powered by Advanced Technologies</h3>
+        </div>
+    </div>
+    
+    <div class="row g-3 justify-content-center">
+        <div class="col-md-2 col-4">
+            <div class="card p-3 text-center">
+                <i class="fab fa-python fa-2x text-primary mb-2"></i>
+                <small class="fw-bold">Python</small>
+            </div>
+        </div>
+        
+        <div class="col-md-2 col-4">
+            <div class="card p-3 text-center">
+                <i class="fas fa-brain fa-2x text-primary mb-2"></i>
+                <small class="fw-bold">Scikit-learn</small>
+            </div>
+        </div>
+        
+        <div class="col-md-2 col-4">
+            <div class="card p-3 text-center">
+                <i class="fab fa-html5 fa-2x text-primary mb-2"></i>
+                <small class="fw-bold">Flask</small>
+            </div>
+        </div>
+        
+        <div class="col-md-2 col-4">
+            <div class="card p-3 text-center">
+                <i class="fas fa-chart-line fa-2x text-primary mb-2"></i>
+                <small class="fw-bold">Pandas</small>
+            </div>
+        </div>
+        
+        <div class="col-md-2 col-4">
+            <div class="card p-3 text-center">
+                <i class="fas fa-database fa-2x text-primary mb-2"></i>
+                <small class="fw-bold">NumPy</small>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

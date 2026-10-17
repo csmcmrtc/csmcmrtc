@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Results - CropYield AI{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold text-success mb-3">
+                    <i class="fas fa-chart-line me-3"></i>Prediction Results
+                </h1>
+                <p class="lead text-muted">
+                    Your crop yield prediction has been generated successfully!
+                </p>
+            </div>
+
+            <!-- Results Card -->
+            <div class="card shadow-lg border-success">
+                <div class="card-header bg-success text-white text-center py-3">
+                    <h4 class="mb-0">
+                        <i class="fas fa-seedling me-2"></i>Crop Yield Prediction Results
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Input Summary -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="fw-bold text-primary mb-3">
+                                <i class="fas fa-info-circle me-2"></i>Farm Information
+                            </h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-bold">State:</td>
+                                            <td>{{ input_data.State_Name }}</td>
+                                            <td class="fw-bold">District:</td>
+                                            <td>{{ input_data.District_Name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Crop Year:</td>
+                                            <td>{{ input_data.Crop_Year }}</td>
+                                            <td class="fw-bold">Season:</td>
+                                            <td>{{ input_data.Season }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold">Crop Type:</td>
+                                            <td>{{ input_data.Crop }}</td>
+                                            <td class="fw-bold">Area:</td>
+                                            <td>{{ input_data.Area }} acres</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Prediction Results -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-primary text-white text-center h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-weight-hanging fa-3x mb-3"></i>
+                                    <h3 class="fw-bold">{{ prediction.production_kg|round(2) }}</h3>
+                                    <p class="mb-0">Total Production (KG)</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card bg-success text-white text-center h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-chart-area fa-3x mb-3"></i>
+                                    <h3 class="fw-bold">{{ prediction.yield_per_acre|round(2) }}</h3>
+                                    <p class="mb-0">Yield per Acre (KG)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Metrics -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-info text-white text-center h-100">
+                                <div class="card-body">
+                                    <i class="fas fa-ruler-combined fa-3x mb-3"></i>
+                                    <h3 class="fw-bold">{{ prediction.area_acres }}</h3>
+                                    <p class="mb-0">Total Area (Acres)</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+
+                    <!-- Analysis Summary -->
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5 class="fw-bold text-primary mb-3">
+                                <i class="fas fa-lightbulb me-2"></i>Analysis Summary
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        <li><i class="fas fa-check-circle text-success me-2"></i>Production Estimate: {{ prediction.production_kg|round(2) }} KG</li>
+                                        <li><i class="fas fa-check-circle text-success me-2"></i>Yield Efficiency: {{ prediction.yield_per_acre|round(2) }} KG/acre</li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul class="list-unstyled">
+                                        
+                                        <li><i class="fas fa-check-circle text-success me-2"></i>Data Quality: High</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="text-center mt-5">
+                <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg px-5 py-3 me-3">
+                    <i class="fas fa-calculator me-2"></i>Make Another Prediction
+                </a>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-primary btn-lg px-5 py-3">
+                    <i class="fas fa-chart-line me-2"></i>View Dashboard
+                </a>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="card mt-5">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-lightbulb me-2"></i>Farming Recommendations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-primary">Based on Your Prediction:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-arrow-up text-success me-2"></i>Expected production: {{ prediction.production_kg|round(2) }} KG</li>
+                                <li><i class="fas fa-arrow-up text-success me-2"></i>Yield per acre: {{ prediction.yield_per_acre|round(2) }} KG/acre</li>
+                                
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-primary">General Tips:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-leaf text-success me-2"></i>Monitor soil moisture regularly</li>
+                                <li><i class="fas fa-sun text-warning me-2"></i>Ensure proper sunlight exposure</li>
+                                <li><i class="fas fa-tint text-info me-2"></i>Maintain optimal irrigation schedule</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="alert alert-warning mt-4" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Disclaimer:</strong> These predictions are based on historical data and machine learning models. 
+                Actual results may vary due to weather conditions, soil quality, and farming practices. 
+                Always consult with agricultural experts for critical farming decisions.
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

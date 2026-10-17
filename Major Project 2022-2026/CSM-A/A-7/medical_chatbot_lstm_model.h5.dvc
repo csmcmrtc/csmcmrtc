@@ -1,0 +1,5 @@
+outs:
+- md5: 1c735b22a30ad90f1299b6dcf5c6d8e2
+  size: 3874856
+  hash: md5
+  path: medical_chatbot_lstm_model.h5

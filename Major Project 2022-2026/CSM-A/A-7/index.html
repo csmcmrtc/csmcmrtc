@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Medical Chatbot - Infectious Disease Prediction</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-heartbeat"></i>
+                    <h1>MediBot AI</h1>
+                </div>
+                <p class="subtitle">AI-Powered Infectious Disease Prediction</p>
+            </div>
+        </header>
+
+        <!-- Main Chat Interface -->
+        <main class="chat-container">
+            <div class="chat-header">
+                <div class="bot-info">
+                    <div class="bot-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="bot-details">
+                        <h3>Dr. AI Assistant</h3>
+                        <span class="status online">Online</span>
+                    </div>
+                </div>
+                <div class="chat-controls">
+                    <!-- Language Selector -->
+                    <select id="languageSelector" class="language-selector" onchange="changeLanguage()">
+                        <option value="en">🇺🇸 English</option>
+                        <option value="te">🇮🇳 తెలుగు (Telugu)</option>
+                        <option value="hi">🇮🇳 हिंदी (Hindi)</option>
+                        <option value="es">🇪🇸 Español</option>
+                        <option value="fr">🇫🇷 Français</option>
+                        <option value="auto">🔍 Auto Detect</option>
+                    </select>
+                    
+                    <!-- Speech Controls -->
+                    <button id="speechToggle" class="btn-speech" onclick="toggleSpeech()" title="Toggle Text-to-Speech">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                    
+                    <button id="listenBtn" class="btn-listen" onclick="startListening()" title="Voice Input">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    
+                    <button class="btn-secondary" onclick="clearChat()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <!-- Welcome message -->
+                <div class="message bot-message">
+                    <div class="message-content">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-bubble">
+                            <p>Hello! I'm Dr. AI Assistant, your AI-powered medical chatbot. I can help you assess symptoms and provide preliminary information about potential infectious diseases.</p>
+                            <p><strong>Important:</strong> This is for informational purposes only and should not replace professional medical advice. Always consult a healthcare provider for proper diagnosis.</p>
+                            <p>How can I help you today? Please describe your symptoms.</p>
+                        </div>
+                    </div>
+                    <div class="message-time">Just now</div>
+                </div>
+            </div>
+
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <input type="text" id="userInput" placeholder="Describe your symptoms..." maxlength="500">
+                    <button class="send-btn" onclick="sendMessage()">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="quick-symptoms">
+                    <span class="quick-label" id="quickLabel">Quick symptoms:</span>
+                    <button class="quick-btn" onclick="addSymptom('fever')" id="feverBtn">Fever</button>
+                    <button class="quick-btn" onclick="addSymptom('cough')" id="coughBtn">Cough</button>
+                    <button class="quick-btn" onclick="addSymptom('fatigue')" id="fatigueBtn">Fatigue</button>
+                    <button class="quick-btn" onclick="addSymptom('headache')" id="headacheBtn">Headache</button>
+                </div>
+                <!-- Speech Status -->
+                <div id="speechStatus" class="speech-status" style="display: none;">
+                    <i class="fas fa-microphone-alt"></i>
+                    <span id="speechStatusText">Listening...</span>
+                </div>
+            </div>
+        </main>
+
+        <!-- Sidebar with Information -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3><i class="fas fa-info-circle"></i> About</h3>
+                <p>This AI chatbot analyzes symptoms to provide preliminary assessments of potential infectious diseases.</p>
+            </div>
+            
+            <div class="sidebar-section">
+                <h3><i class="fas fa-exclamation-triangle"></i> Disclaimer</h3>
+                <p>This tool is for educational purposes only. It does not provide medical diagnosis and should not replace professional healthcare.</p>
+            </div>
+
+            <div class="sidebar-section">
+                <h3><i class="fas fa-phone"></i> Emergency</h3>
+                <p>If you're experiencing severe symptoms, please contact emergency services immediately.</p>
+                <button class="emergency-btn" onclick="showEmergencyInfo()">
+                    <i class="fas fa-ambulance"></i> Emergency Info
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Analyzing symptoms...</p>
+        </div>
+    </div>
+
+    <!-- Emergency Modal -->
+    <div class="modal" id="emergencyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-exclamation-triangle"></i> Emergency Information</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Call Emergency Services (911) immediately if you experience:</strong></p>
+                <ul>
+                    <li>Difficulty breathing or shortness of breath</li>
+                    <li>Chest pain or pressure</li>
+                    <li>Severe confusion or disorientation</li>
+                    <li>Unconsciousness or fainting</li>
+                    <li>Severe bleeding</li>
+                    <li>High fever (above 103°F/39.4°C)</li>
+                </ul>
+                <p><strong>For non-emergency medical advice:</strong></p>
+                <p>Contact your healthcare provider or visit the nearest urgent care facility.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

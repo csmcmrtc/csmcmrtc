@@ -1,0 +1,24 @@
+stages:
+  preprocess:
+    cmd: python src/ml_model/preprocess.py
+    deps:
+    - data/disease_database.json
+    - src/ml_model/preprocess.py
+    outs:
+    - data/processed.csv
+  train:
+    cmd: python src/ml_model/train.py
+    deps:
+    - data/processed.csv
+    - src/ml_model/train.py
+    outs:
+    - models/chatbot_model.pkl
+  evaluate:
+    cmd: python src/ml_model/evaluate.py
+    deps:
+    - data/processed.csv
+    - models/chatbot_model.pkl
+    - src/ml_model/evaluate.py
+    metrics:
+    - metrics.json:
+        cache: false
