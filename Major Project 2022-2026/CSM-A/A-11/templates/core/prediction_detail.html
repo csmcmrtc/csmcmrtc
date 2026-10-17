@@ -1,0 +1,97 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ prediction.disease_type|upper }} Prediction - AIMed Prognosis{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg p-8">
+        <h1 class="text-3xl font-bold mb-2">{{ prediction.disease_type|upper }} Risk Assessment</h1>
+        <p class="text-blue-100">Predicted on {{ prediction.predicted_at|date:"M d, Y H:i" }}</p>
+    </div>
+
+    <!-- Risk Summary -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-slate-600 text-sm mb-2">Risk Probability</p>
+            <p class="text-4xl font-bold {% if prediction.risk_level == 'critical' %}text-red-600{% elif prediction.risk_level == 'high' %}text-orange-600{% elif prediction.risk_level == 'moderate' %}text-yellow-600{% else %}text-green-600{% endif %}">
+                {{ prediction.prediction_probability|floatformat:1 }}%
+            </p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-slate-600 text-sm mb-2">Risk Level</p>
+            <p class="text-2xl font-bold {% if prediction.risk_level == 'critical' %}text-red-600{% elif prediction.risk_level == 'high' %}text-orange-600{% elif prediction.risk_level == 'moderate' %}text-yellow-600{% else %}text-green-600{% endif %}">
+                {{ prediction.get_risk_level_display }}
+            </p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-slate-600 text-sm mb-2">Model Accuracy</p>
+            <p class="text-2xl font-bold text-blue-600">{{ prediction.model.accuracy|floatformat:1 }}%</p>
+        </div>
+    </div>
+
+    <!-- Top Risk Factors -->
+    {% if prediction.top_risk_factors %}
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-bold text-slate-900 mb-4">Top Risk Factors</h2>
+            <div class="space-y-3">
+                {% for factor in prediction.top_risk_factors %}
+                    <div class="flex items-center p-3 bg-slate-50 rounded-lg">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold mr-3">
+                            {{ forloop.counter }}
+                        </div>
+                        <span class="text-slate-900 font-semibold">{{ factor|title }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Recommendations -->
+    {% if prediction.recommendations %}
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-bold text-slate-900 mb-4">Personalized Recommendations</h2>
+            <div class="space-y-3">
+                {% for rec in prediction.recommendations %}
+                    <div class="flex items-start p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                        <svg class="w-5 h-5 text-blue-600 mr-3 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span class="text-slate-900">{{ rec }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Model Information -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold text-slate-900 mb-4">Model Information</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+                <p class="text-sm text-slate-600">Algorithm</p>
+                <p class="font-semibold text-slate-900">{{ prediction.model.get_algorithm_display }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-slate-600">Precision</p>
+                <p class="font-semibold text-slate-900">{{ prediction.model.precision|floatformat:3 }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-slate-600">Recall</p>
+                <p class="font-semibold text-slate-900">{{ prediction.model.recall|floatformat:3 }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-slate-600">F1 Score</p>
+                <p class="font-semibold text-slate-900">{{ prediction.model.f1_score|floatformat:3 }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <div>
+        <a href="{% url 'dashboard' %}" class="px-6 py-3 bg-slate-200 text-slate-900 rounded-lg hover:bg-slate-300 font-semibold">
+            ← Back to Dashboard
+        </a>
+    </div>
+</div>
+{% endblock %}

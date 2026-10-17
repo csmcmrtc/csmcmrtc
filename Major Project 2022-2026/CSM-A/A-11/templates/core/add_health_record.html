@@ -1,0 +1,172 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Add Health Record - AIMed Prognosis{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-slate-900 mb-8">Add Health Record</h1>
+
+    <form method="post" class="bg-white rounded-lg shadow p-8 space-y-8">
+        {% csrf_token %}
+
+        <!-- Vital Signs Section -->
+        <div>
+            <h2 class="text-xl font-bold text-slate-900 mb-4 pb-2 border-b">Vital Signs</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Age</label>
+                    {{ form.age }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Sex</label>
+                    {{ form.sex }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">BMI</label>
+                    {{ form.bmi }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Systolic BP (mmHg)</label>
+                    {{ form.systolic_bp }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Diastolic BP (mmHg)</label>
+                    {{ form.diastolic_bp }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Heart Rate (bpm)</label>
+                    {{ form.heart_rate }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Respiratory Rate</label>
+                    {{ form.respiratory_rate }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Temperature (°C)</label>
+                    {{ form.temperature_c }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Lab Values Section -->
+        <div>
+            <h2 class="text-xl font-bold text-slate-900 mb-4 pb-2 border-b">Lab Values</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Total Cholesterol (mg/dL)</label>
+                    {{ form.cholesterol_total_mg_dL }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">HDL (mg/dL)</label>
+                    {{ form.hdl_mg_dL }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">LDL (mg/dL)</label>
+                    {{ form.ldl_mg_dL }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Triglycerides (mg/dL)</label>
+                    {{ form.triglycerides_mg_dL }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Fasting Glucose (mg/dL)</label>
+                    {{ form.glucose_fasting_mg_dL }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">HbA1c (%)</label>
+                    {{ form.hba1c_percent }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Creatinine (mg/dL)</label>
+                    {{ form.creatinine_mg_dL }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">eGFR (mL/min/1.73m²)</label>
+                    {{ form.egfr_mL_min_1_73m2 }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Lifestyle Section -->
+        <div>
+            <h2 class="text-xl font-bold text-slate-900 mb-4 pb-2 border-b">Lifestyle</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Smoking Status</label>
+                    {{ form.smoking_status }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Alcohol (units/week)</label>
+                    {{ form.alcohol_units_per_week }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Physical Activity Level</label>
+                    {{ form.physical_activity_level }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical History Section -->
+        <div>
+            <h2 class="text-xl font-bold text-slate-900 mb-4 pb-2 border-b">Medical History</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">
+                        <input type="checkbox" name="family_history_cvd" class="mr-2"> Family History of CVD
+                    </label>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Comorbidities Count</label>
+                    {{ form.comorbidities_count }}
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Comorbidities</label>
+                    {{ form.comorbidities }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Medications Count</label>
+                    {{ form.medications_count }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Recent Hospitalizations</label>
+                    {{ form.recent_hospitalizations }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Wearable Data Section -->
+        <div>
+            <h2 class="text-xl font-bold text-slate-900 mb-4 pb-2 border-b">Wearable Data (Optional)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Avg Heart Rate (7 days)</label>
+                    {{ form.wearable_hr_mean_7d }}
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-900 mb-2">Avg Steps (7 days)</label>
+                    {{ form.wearable_steps_avg_7d }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Errors -->
+        {% if form.non_field_errors %}
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                {% for error in form.non_field_errors %}
+                    <p class="text-red-700">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Submit Button -->
+        <div class="flex gap-4">
+            <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                Submit & Get Predictions
+            </button>
+            <a href="{% url 'dashboard' %}" class="px-6 py-3 bg-slate-200 text-slate-900 rounded-lg hover:bg-slate-300 font-semibold">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

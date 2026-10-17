@@ -1,0 +1,163 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Admin Dashboard - AIMed Prognosis{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-purple-600 to-purple-800 text-white rounded-lg p-8">
+        <h1 class="text-3xl font-bold mb-2">Admin Dashboard</h1>
+        <p class="text-purple-100">Manage datasets, train models, and monitor system performance</p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow p-6">
+            <p class="text-slate-600 text-sm mb-2">Total Datasets</p>
+            <p class="text-3xl font-bold text-slate-900">{{ datasets.count }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <p class="text-slate-600 text-sm mb-2">Trained Models</p>
+            <p class="text-3xl font-bold text-slate-900">{{ models.count }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <p class="text-slate-600 text-sm mb-2">Total Predictions</p>
+            <p class="text-3xl font-bold text-slate-900">{{ total_predictions }}</p>
+        </div>
+        <div class="bg-white rounded-lg shadow p-6">
+            <p class="text-slate-600 text-sm mb-2">Active Models</p>
+            <p class="text-3xl font-bold text-slate-900">{{ models|length }}</p>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="{% url 'upload_dataset' %}" class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition border-l-4 border-blue-500">
+            <h3 class="text-lg font-semibold text-slate-900 mb-2">Upload Dataset</h3>
+            <p class="text-slate-600 text-sm">Upload a new CSV dataset for model training</p>
+        </a>
+        <a href="{% url 'import_aimed_dataset' %}" class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition border-l-4 border-green-500">
+            <h3 class="text-lg font-semibold text-slate-900 mb-2">Import AIMed Dataset</h3>
+            <p class="text-slate-600 text-sm">Import the 52,000 patient AIMed Prognosis dataset</p>
+        </a>
+        <a href="{% url 'model_comparison' %}" class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition border-l-4 border-purple-500">
+            <h3 class="text-lg font-semibold text-slate-900 mb-2">View All Models</h3>
+            <p class="text-slate-600 text-sm">Compare and manage trained disease models</p>
+        </a>
+    </div>
+
+    <!-- Datasets Section -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-2xl font-bold text-slate-900 mb-6">Datasets</h2>
+        {% if datasets %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-50 border-b">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-semibold text-slate-900">Name</th>
+                            <th class="px-4 py-3 text-left font-semibold text-slate-900">Rows</th>
+                            <th class="px-4 py-3 text-left font-semibold text-slate-900">Columns</th>
+                            <th class="px-4 py-3 text-left font-semibold text-slate-900">Uploaded</th>
+                            <th class="px-4 py-3 text-left font-semibold text-slate-900">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for dataset in datasets %}
+                            <tr class="border-b hover:bg-slate-50">
+                                <td class="px-4 py-3 font-semibold text-slate-900">{{ dataset.name }}</td>
+                                <td class="px-4 py-3 text-slate-600">{{ dataset.rows_count }}</td>
+                                <td class="px-4 py-3 text-slate-600">{{ dataset.columns_info|length }}</td>
+                                <td class="px-4 py-3 text-slate-600">{{ dataset.uploaded_at|date:"M d, Y" }}</td>
+                                <td class="px-4 py-3 space-x-2">
+                                    <a href="{% url 'train_model' dataset.id %}" class="text-blue-600 hover:text-blue-800 font-semibold">Train</a>
+                                    <a href="{% url 'delete_dataset' dataset.id %}" class="text-red-600 hover:text-red-800 font-semibold" onclick="return confirm('Delete this dataset?')">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-slate-600">No datasets uploaded yet. <a href="{% url 'upload_dataset' %}" class="text-blue-600 hover:text-blue-800">Upload one now</a>.</p>
+        {% endif %}
+    </div>
+
+<!-- Models Section -->
+<div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6" id="models">
+    <h2 class="text-2xl font-bold text-slate-900 mb-6">Trained Models</h2>
+
+    {% if models %}
+        <div class="space-y-4">
+            {% for model in models %}
+                <div 
+                    class="p-5 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition cursor-pointer group"
+                    onclick="window.location='{% url 'model_details' model.id %}'"
+                >
+                    <div class="flex items-center justify-between mb-2">
+                        <div>
+                            <!-- Model Name (newly added line) -->
+                            <h4 class="font-semibold text-slate-900">{{ model.name }}</h4>
+
+                            <!-- Algorithm -->
+                            <p class="text-sm text-slate-600">{{ model.get_algorithm_display }}</p>
+                        </div>
+
+                        <!-- Active/Inactive Badge -->
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full
+                            {% if model.is_active %}
+                                bg-green-100 text-green-800
+                            {% else %}
+                                bg-slate-200 text-slate-700
+                            {% endif %}
+                        ">
+                            {% if model.is_active %}Active{% else %}Inactive{% endif %}
+                        </span>
+                    </div>
+
+                    <!-- Metrics Section -->
+                    <div class="grid grid-cols-4 gap-2 text-center mt-4">
+                        <div class="bg-white rounded-lg p-2">
+                            <p class="text-xs text-slate-600">Accuracy</p>
+                            <p class="text-sm font-bold text-slate-900">{{ model.metrics.accuracy|floatformat:1 }}%</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-2">
+                            <p class="text-xs text-slate-600">Precision</p>
+                            <p class="text-sm font-bold text-slate-900">{{ model.metrics.precision|floatformat:3 }}</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-2">
+                            <p class="text-xs text-slate-600">Recall</p>
+                            <p class="text-sm font-bold text-slate-900">{{ model.metrics.recall|floatformat:3 }}</p>
+                        </div>
+                        <div class="bg-white rounded-lg p-2">
+                            <p class="text-xs text-slate-600">F1 Score</p>
+                            <p class="text-sm font-bold text-slate-900">{{ model.metrics.f1|floatformat:3 }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="flex items-center justify-between mt-4">
+                        <p class="text-xs text-slate-500">Created: {{ model.created_at|date:"M d, Y" }}</p>
+                        <div class="flex gap-2">
+                            <a href="{% url 'model_details' model.id %}"
+                               onclick="event.stopPropagation()"
+                               class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition font-medium">
+                               View
+                            </a>
+                            <a href="{% url 'delete_model' model.id %}"
+                               onclick="event.stopPropagation(); return confirm('Delete this model?')"
+                               class="px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition font-medium">
+                               Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-slate-600 text-center py-8">
+            No models trained yet.
+            <a href="{% url 'upload_dataset' %}" class="text-blue-600 hover:text-blue-800 font-semibold">Upload a dataset</a> and train one.
+        </p>
+    {% endif %}
+</div>
+{% endblock %}

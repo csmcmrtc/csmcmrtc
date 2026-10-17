@@ -1,0 +1,191 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Model Details - AIMed Prognosis{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto space-y-10 p-4 md:p-8 animate-fade-in">
+
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 via-blue-700 to-blue-900 text-white rounded-2xl p-8 shadow-lg">
+        <h1 class="text-4xl font-extrabold mb-2 tracking-tight">
+            {{ model.get_disease_type_display }} Model
+        </h1>
+        <p class="text-blue-200 text-sm">
+            Algorithm:
+            <span class="font-semibold">{{ model.get_algorithm_display }}</span> |
+            Created: {{ model.created_at|date:"M d, Y H:i" }}
+        </p>
+    </div>
+
+    <!-- Performance Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
+        <div class="bg-white rounded-xl shadow p-6 text-center">
+            <p class="text-slate-500 text-sm mb-2">Accuracy</p>
+            <p class="text-3xl font-bold text-blue-600">{{ metrics.accuracy|floatformat:1 }}%</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-6 text-center">
+            <p class="text-slate-500 text-sm mb-2">Precision</p>
+            <p class="text-3xl font-bold text-green-600">{{ metrics.precision|floatformat:3 }}</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-6 text-center">
+            <p class="text-slate-500 text-sm mb-2">Recall</p>
+            <p class="text-3xl font-bold text-orange-600">{{ metrics.recall|floatformat:3 }}</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-6 text-center">
+            <p class="text-slate-500 text-sm mb-2">F1 Score</p>
+            <p class="text-3xl font-bold text-purple-600">{{ metrics.f1_score|floatformat:3 }}</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-6 text-center">
+            <p class="text-slate-500 text-sm mb-2">AUC Score</p>
+            <p class="text-3xl font-bold text-red-600">
+                {% if metrics.auc_score %}
+                    {{ metrics.auc_score|floatformat:3 }}
+                {% else %}
+                    N/A
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- Confusion Matrix -->
+    <div class="bg-white rounded-xl shadow-md p-6 border border-slate-100 hover:shadow-lg transition">
+        <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <i data-lucide="grid" class="w-5 h-5 text-orange-600"></i>
+            Confusion Matrix
+        </h3>
+
+        <div class="bg-slate-50 rounded-lg p-6 overflow-x-auto">
+            <div class="grid grid-cols-3 gap-4 text-center text-sm font-medium text-slate-700">
+                <div></div>
+                <div>Predicted No</div>
+                <div>Predicted Yes</div>
+
+                <div>Actual No</div>
+                <div class="bg-white border border-slate-200 rounded-lg p-4">
+                    <p class="text-2xl font-bold text-slate-900">{{ model.confusion_matrix.0.0 }}</p>
+                    <p class="text-xs text-slate-500 mt-1">True Negative</p>
+                </div>
+                <div class="bg-white border border-rose-200 rounded-lg p-4">
+                    <p class="text-2xl font-bold text-rose-700">{{ model.confusion_matrix.0.1 }}</p>
+                    <p class="text-xs text-rose-600 mt-1">False Positive</p>
+                </div>
+
+                <div>Actual Yes</div>
+                <div class="bg-white border border-amber-200 rounded-lg p-4">
+                    <p class="text-2xl font-bold text-amber-700">{{ model.confusion_matrix.1.0 }}</p>
+                    <p class="text-xs text-amber-600 mt-1">False Negative</p>
+                </div>
+                <div class="bg-white border border-emerald-200 rounded-lg p-4">
+                    <p class="text-2xl font-bold text-emerald-700">{{ model.confusion_matrix.1.1 }}</p>
+                    <p class="text-xs text-emerald-600 mt-1">True Positive</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Model Configuration and Training Parameters -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Model Configuration -->
+        <div class="bg-white rounded-xl shadow-md p-6 border border-slate-100 hover:shadow-lg transition">
+            <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <i data-lucide="settings" class="w-5 h-5 text-blue-600"></i>
+                Model Configuration
+            </h2>
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <span class="text-slate-600">Status:</span>
+                    <span class="font-semibold {% if model.is_active %}text-green-600{% else %}text-red-600{% endif %}">
+                        {% if model.is_active %}Active{% else %}Inactive{% endif %}
+                    </span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-600">Created:</span>
+                    <span class="font-semibold text-slate-900">{{ model.created_at|date:"M d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Training Parameters -->
+        <div class="bg-white rounded-xl shadow-md p-6 border border-slate-100 hover:shadow-lg transition">
+            <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <i data-lucide="cpu" class="w-5 h-5 text-blue-600"></i>
+                Training Parameters
+            </h2>
+            <div class="space-y-3">
+                {% for key, value in model.training_params.items %}
+                    <div class="flex justify-between">
+                        <span class="text-slate-600">{{ key|title }}:</span>
+                        <span class="font-semibold text-slate-900">
+                            {% if key == 'test_size' %}
+                                {{ value|floatformat:2 }}
+                            {% else %}
+                                {{ value }}
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Importance -->
+    {% if model.feature_importance %}
+    <div class="bg-white rounded-xl shadow-md p-6 border border-slate-100 hover:shadow-lg transition">
+        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <i data-lucide="bar-chart-3" class="w-5 h-5 text-blue-600"></i>
+            Top Features
+        </h2>
+
+        <div class="space-y-4">
+            {% for feature, importance in model.feature_importance.items|slice:":10" %}
+            <div>
+                <div class="flex justify-between mb-1">
+                    <span class="font-semibold text-slate-800">{{ feature }}</span>
+                    <span class="text-slate-500">{{ importance|floatformat:4 }}</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2">
+                    <div
+                        class="bg-gradient-to-r from-blue-500 to-indigo-600 h-2 rounded-full"
+                        style="width: {{ importance|floatformat:2 }}%;">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Actions -->
+    <div class="flex flex-wrap gap-4 pt-4">
+        <a href="{% url 'dashboard' %}"
+           class="px-6 py-3 bg-slate-100 text-slate-900 rounded-lg hover:bg-slate-200 transition font-semibold shadow-sm">
+            ← Back to Dashboard
+        </a>
+
+        <a href="{% url 'delete_model' model.id %}"
+           class="px-6 py-3 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition font-semibold shadow-sm"
+           onclick="return confirm('Delete this model?')">
+            Delete Model
+        </a>
+    </div>
+
+</div>
+
+<!-- Animation -->
+<style>
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.6s ease-in-out;
+}
+</style>
+
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  if (window.lucide) lucide.createIcons();
+</script>
+{% endblock %}

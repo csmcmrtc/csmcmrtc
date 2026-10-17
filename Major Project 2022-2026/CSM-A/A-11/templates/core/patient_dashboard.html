@@ -1,0 +1,94 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Patient Dashboard - AIMed Prognosis{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg p-8">
+        <h1 class="text-3xl font-bold mb-2">Welcome, {{ user.first_name|default:user.username }}</h1>
+        <p class="text-blue-100">Monitor your health and get AI-powered disease predictions</p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <a href="{% url 'add_health_record' %}" class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition border-l-4 border-blue-500">
+            <h3 class="text-lg font-semibold text-slate-900 mb-2">Add Health Record</h3>
+            <p class="text-slate-600">Submit your latest health data for analysis</p>
+        </a>
+        <a href="{% url 'health_records' %}" class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition border-l-4 border-green-500">
+            <h3 class="text-lg font-semibold text-slate-900 mb-2">View Records</h3>
+            <p class="text-slate-600">{{ health_records.count }} health records on file</p>
+        </a>
+        <a href="{% url 'patient_profile' %}" class="bg-white p-6 rounded-lg shadow hover:shadow-lg transition border-l-4 border-purple-500">
+            <h3 class="text-lg font-semibold text-slate-900 mb-2">My Profile</h3>
+            <p class="text-slate-600">Update your medical history and preferences</p>
+        </a>
+    </div>
+
+    <!-- Recent Predictions -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4">Recent Predictions</h2>
+        {% if predictions %}
+            <div class="space-y-4">
+                {% for prediction in predictions|slice:":5" %}
+                    <div class="border border-slate-200 rounded-lg p-4 hover:bg-slate-50 transition">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-semibold text-slate-900">{{ prediction.disease_type|upper }}</h3>
+                                <p class="text-sm text-slate-600">{{ prediction.predicted_at|date:"M d, Y H:i" }}</p>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-2xl font-bold {% if prediction.risk_level == 'critical' %}text-red-600{% elif prediction.risk_level == 'high' %}text-orange-600{% elif prediction.risk_level == 'moderate' %}text-yellow-600{% else %}text-green-600{% endif %}">
+                                    {{ prediction.prediction_probability|floatformat:1 }}%
+                                </div>
+                                <span class="text-sm font-semibold {% if prediction.risk_level == 'critical' %}text-red-600{% elif prediction.risk_level == 'high' %}text-orange-600{% elif prediction.risk_level == 'moderate' %}text-yellow-600{% else %}text-green-600{% endif %}">
+                                    {{ prediction.get_risk_level_display }}
+                                </span>
+                            </div>
+                        </div>
+                        <a href="{% url 'prediction_detail' prediction.id %}" class="text-blue-600 hover:text-blue-800 text-sm mt-2 inline-block">View Details →</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-slate-600">No predictions yet. <a href="{% url 'add_health_record' %}" class="text-blue-600 hover:text-blue-800">Add a health record</a> to get started.</p>
+        {% endif %}
+    </div>
+
+    <!-- Health Records Summary -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4">Health Records</h2>
+        {% if health_records %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-slate-50 border-b">
+                        <tr>
+                            <th class="px-4 py-2 text-left font-semibold text-slate-900">Date</th>
+                            <th class="px-4 py-2 text-left font-semibold text-slate-900">Age</th>
+                            <th class="px-4 py-2 text-left font-semibold text-slate-900">BMI</th>
+                            <th class="px-4 py-2 text-left font-semibold text-slate-900">Blood Pressure</th>
+                            <th class="px-4 py-2 text-left font-semibold text-slate-900">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in health_records|slice:":5" %}
+                            <tr class="border-b hover:bg-slate-50">
+                                <td class="px-4 py-2">{{ record.created_at|date:"M d, Y" }}</td>
+                                <td class="px-4 py-2">{{ record.age }}</td>
+                                <td class="px-4 py-2">{{ record.bmi|floatformat:1 }}</td>
+                                <td class="px-4 py-2">{{ record.systolic_bp }}/{{ record.diastolic_bp }}</td>
+                                <td class="px-4 py-2">
+                                    <a href="{% url 'predict_disease' record.id %}" class="text-blue-600 hover:text-blue-800">Predict</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-slate-600">No health records yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Health Records - AIMed Prognosis{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-lg p-8">
+        <h1 class="text-3xl font-bold mb-2">My Health Records</h1>
+        <p class="text-blue-100">View and manage all your health records</p>
+    </div>
+
+    <!-- Quick Action -->
+    <div class="flex justify-end">
+        <a href="{% url 'add_health_record' %}" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+            + Add New Record
+        </a>
+    </div>
+
+    <!-- Health Records List -->
+    {% if records %}
+        <div class="space-y-4">
+            {% for record in records %}
+                <div class="bg-white rounded-lg shadow p-6 hover:shadow-lg transition">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-900">{{ record.created_at|date:"F d, Y" }}</h3>
+                            <p class="text-sm text-slate-600">{{ record.created_at|date:"H:i" }}</p>
+                        </div>
+                        <a href="{% url 'predict_disease' record.id %}" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold text-sm">
+                            Get Predictions
+                        </a>
+                    </div>
+
+                    <!-- Vital Signs Summary -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                        <div>
+                            <p class="text-xs text-slate-600">Age</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ record.age }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600">BMI</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ record.bmi|floatformat:1 }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600">Blood Pressure</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ record.systolic_bp }}/{{ record.diastolic_bp }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600">Heart Rate</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ record.heart_rate }} bpm</p>
+                        </div>
+                    </div>
+
+                    <!-- Lab Values Summary -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 pb-4 border-b">
+                        <div>
+                            <p class="text-xs text-slate-600">Glucose</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ record.glucose_fasting_mg_dL|floatformat:0 }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600">Cholesterol</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ record.cholesterol_total_mg_dL|floatformat:0 }}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600">HbA1c</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ record.hba1c_percent|floatformat:1 }}%</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600">eGFR</p>
+                            <p class="text-lg font-semibold text-slate-900">{{ record.egfr_mL_min_1_73m2|floatformat:0 }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Lifestyle Info -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                        <div>
+                            <p class="text-slate-600">Smoking Status</p>
+                            <p class="font-semibold text-slate-900">{{ record.get_smoking_status_display }}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-600">Activity Level</p>
+                            <p class="font-semibold text-slate-900">{{ record.get_physical_activity_level_display }}</p>
+                        </div>
+                        <div>
+                            <p class="text-slate-600">Comorbidities</p>
+                            <p class="font-semibold text-slate-900">{{ record.comorbidities_count }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-white rounded-lg shadow p-12 text-center">
+            <p class="text-slate-600 mb-4">No health records yet.</p>
+            <a href="{% url 'add_health_record' %}" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold">
+                Add Your First Record
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
