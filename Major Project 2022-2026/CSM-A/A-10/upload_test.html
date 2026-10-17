@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Brain Tumor Prediction Upload</title>
+    <style>
+        body {
+            background-image: url('https://wallpaperaccess.com/full/624185.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 40px 30px 30px 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            text-align: center;
+            max-width: 400px;
+        }
+        h2 {
+            margin-bottom: 24px;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        input[type="file"], input[type="email"] {
+            padding: 8px;
+            border-radius: 6px;
+            border: none;
+            background: #fff;
+            color: #333;
+        }
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #0072ff 0%, #00c6ff 100%);
+        }
+        .footer {
+            margin-top: 30px;
+            color: #eee;
+            font-size: 0.95rem;
+            text-shadow: 0 1px 2px #000;
+        }
+        #progressBar {
+            width: 100%;
+            height: 12px;
+            background: #222;
+            border-radius: 6px;
+            margin: 16px 0 8px 0;
+            box-shadow: 0 2px 8px #0004;
+            overflow: hidden;
+            display: none;
+        }
+        #progressInner {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #00c6ff 0%, #0072ff 100%);
+            border-radius: 6px;
+            transition: width 0.5s;
+        }
+        .preview-img {
+            max-width: 110px;
+            max-height: 110px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #0005;
+            margin: 0 7px 7px 0;
+            border: 2px solid #00c6ff33;
+            transition: border 0.2s;
+            cursor: pointer;
+        }
+        .preview-img.selected {
+            border: 2.5px solid #00c6ff;
+        }
+        .annotation-canvas {
+            outline: 2px dashed #00c6ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>2025 Medical Image Diagnosis System</h2>
+    </div>
+    <br>
+    <div class="container">
+        <h2>🧠 Brain Tumor Prediction</h2>
+        <form id="uploadForm" enctype="multipart/form-data" autocomplete="off">
+            <input type="file" id="fileInput" name="file" accept="image/*" multiple required>
+            <div id="previewContainer" style="display:flex;flex-wrap:wrap;gap:10px;margin:10px 0;"></div>
+            <input type="email" id="emailInput" name="email" placeholder="Enter your email (optional)" style="margin:10px 0 0 0;padding:8px;border-radius:6px;border:none;" />
+            <button type="button" id="annotateBtn" style="margin:10px 0 0 0;">Annotate</button>
+            <button type="button" id="clearAnnotateBtn" style="margin:10px 0 0 10px;display:none;">Clear Annotations</button>
+            <button type="submit">Predict</button>
+        </form>
+        <div id="result" style="margin-top:20px;font-size:1.1rem;"></div>
+        <button id="downloadPdfBtn" style="display:none;margin-top:10px;padding:8px 16px;border-radius:6px;border:none;background:#00c6ff;color:#fff;font-weight:bold;cursor:pointer;">Download PDF Report</button>
+        <button id="downloadBatchPdfBtn" style="display:none;margin-top:10px;padding:8px 16px;border-radius:6px;border:none;background:#00c6ff;color:#fff;font-weight:bold;cursor:pointer;">Download Batch PDF Report</button>
+        <h3 style="margin-top:30px;">Prediction History</h3>
+        <table id="historyTable" style="width:100%;background:rgba(255,255,255,0.07);color:#fff;border-radius:8px;box-shadow:0 2px 8px #0002;margin-top:10px;">
+            <thead>
+                <tr>
+                    <th style="padding:6px;">Image</th>
+                    <th style="padding:6px;">Diagnosis</th>
+                    <th style="padding:6px;">Confidence</th>
+                    <th style="padding:6px;">Time</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="progressBar"><div id="progressInner"></div></div>
+    </div>
+    <!-- <div class="footer">2025 Medical Image Diagnosis System</div> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        const form = document.getElementById('uploadForm');
+        const resultDiv = document.getElementById('result');
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const annotateBtn = document.getElementById('annotateBtn');
+        const clearAnnotateBtn = document.getElementById('clearAnnotateBtn');
+        const historyTable = document.getElementById('historyTable').getElementsByTagName('tbody')[0];
+        const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+        const downloadBatchPdfBtn = document.getElementById('downloadBatchPdfBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressInner = document.getElementById('progressInner');
+        let lastReport = '';
+        let lastDiagnosis = '', lastConfidence = '', lastTime = '', lastImage = '';
+        let lastBatchResults = [];
+        let lastBatchPdfBase64 = '';
+
+        function showProgress(percent) {
+            progressBar.style.display = 'block';
+            progressInner.style.width = percent + '%';
+        }
+        function hideProgress() {
+            progressBar.style.display = 'none';
+            progressInner.style.width = '0%';
+        }
+
+        fileInput.addEventListener('change', function() {
+            previewContainer.innerHTML = '';
+            const files = Array.from(this.files);
+            files.forEach((file, idx) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'preview-img';
+                    img.setAttribute('data-idx', idx);
+                    previewContainer.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        function addToHistory(imageSrc, diagnosis, confidence) {
+            const row = historyTable.insertRow(0);
+            const imgCell = row.insertCell(0);
+            const diagCell = row.insertCell(1);
+            const confCell = row.insertCell(2);
+            const timeCell = row.insertCell(3);
+            imgCell.innerHTML = `<img src="${imageSrc}" style="width:48px;height:48px;object-fit:cover;border-radius:6px;box-shadow:0 1px 4px #0003;" />`;
+            diagCell.textContent = diagnosis;
+            confCell.textContent = confidence;
+            const now = new Date();
+            timeCell.textContent = now.toLocaleString();
+        }
+
+        function getCurrentTimestamp() {
+            const now = new Date();
+            return now.toLocaleString();
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            showProgress(30);
+            resultDiv.textContent = 'Predicting...';
+            downloadPdfBtn.style.display = 'none';
+            downloadBatchPdfBtn.style.display = 'none';
+            lastBatchPdfBase64 = '';
+            const formData = new FormData();
+            const files = Array.from(fileInput.files);
+            files.forEach((file, idx) => {
+                formData.append('file', file, file.name);
+            });
+            // Only send email if user requested, but do NOT send PDF yet
+            const email = document.getElementById('emailInput').value;
+            if (email) {
+                formData.append('email', email);
+            }
+            await submitPrediction(formData);
+            hideProgress();
+        });
+
+        async function submitPrediction(formData) {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) {
+                    let errorMsg = 'Unknown error';
+                    try {
+                        const error = await response.json();
+                        errorMsg = error.error || errorMsg;
+                    } catch (err) {}
+                    resultDiv.textContent = 'Error: ' + errorMsg;
+                } else {
+                    const data = await response.json();
+                    if (Array.isArray(data.results)) {
+                        // Batch results
+                        resultDiv.innerHTML = data.results.map((r, i) => `<b>Image ${i+1}:</b> ${r.diagnosis}, <b>Confidence:</b> ${r.confidence}`).join('<br>');
+                        downloadBatchPdfBtn.style.display = 'inline-block';
+                        // Add batch results to history
+                        const files = Array.from(fileInput.files);
+                        files.forEach((file, idx) => {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                addToHistory(e.target.result, data.results[idx].diagnosis, data.results[idx].confidence);
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                        // Save for PDF/email
+                        lastBatchResults = data.results.map((r, idx) => ({
+                            image: null, // will fill below
+                            diagnosis: r.diagnosis,
+                            confidence: r.confidence
+                        }));
+                        files.forEach((file, idx) => {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                lastBatchResults[idx].image = e.target.result;
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                    } else {
+                        // Single result fallback
+                        resultDiv.innerHTML = `<b>Diagnosis:</b> ${data.diagnosis}<br><b>Confidence:</b> ${data.confidence}`;
+                        downloadPdfBtn.style.display = 'inline-block';
+                        // Add single result to history
+                        if (previewContainer.firstChild) {
+                            addToHistory(previewContainer.firstChild.src, data.diagnosis, data.confidence);
+                        }
+                        // Save for PDF/email
+                        lastDiagnosis = data.diagnosis;
+                        lastConfidence = data.confidence;
+                        lastTime = getCurrentTimestamp();
+                        if (previewContainer.firstChild) {
+                            lastImage = previewContainer.firstChild.src;
+                        }
+                    }
+                    if (data.email_sent) {
+                        resultDiv.innerHTML += '<br><span style="color:#0f0;">Report sent to your email!</span>';
+                    }
+                }
+            } catch (err) {
+                resultDiv.textContent = 'Error: Could not connect to server.';
+            }
+        }
+
+        // Annotation logic
+        let annotationCanvas = null;
+        let annotationCtx = null;
+        let isAnnotating = false;
+        let startX = 0, startY = 0;
+        let currentImgIdx = 0;
+
+        annotateBtn.addEventListener('click', function() {
+            // If already annotating, do nothing
+            if (annotationCanvas) return;
+            // Find the first image in preview (or selected)
+            const img = previewContainer.querySelector('img[data-idx]');
+            if (!img) {
+                alert('Please select an image to annotate.');
+                return;
+            }
+            // Create canvas overlay
+            annotationCanvas = document.createElement('canvas');
+            annotationCanvas.width = img.naturalWidth;
+            annotationCanvas.height = img.naturalHeight;
+            annotationCanvas.style.position = 'absolute';
+            annotationCanvas.style.left = img.offsetLeft + 'px';
+            annotationCanvas.style.top = img.offsetTop + 'px';
+            annotationCanvas.style.width = img.width + 'px';
+            annotationCanvas.style.height = img.height + 'px';
+            annotationCanvas.style.zIndex = 10;
+            annotationCanvas.style.borderRadius = img.style.borderRadius;
+            annotationCanvas.style.boxShadow = img.style.boxShadow;
+            annotationCanvas.style.background = 'rgba(0,0,0,0)';
+            annotationCanvas.classList.add('annotation-canvas');
+            previewContainer.style.position = 'relative';
+            previewContainer.appendChild(annotationCanvas);
+            annotationCtx = annotationCanvas.getContext('2d');
+            isAnnotating = false;
+            clearAnnotateBtn.style.display = 'inline-block';
+
+            annotationCanvas.addEventListener('mousedown', function(e) {
+                isAnnotating = true;
+                const rect = annotationCanvas.getBoundingClientRect();
+                startX = (e.clientX - rect.left) * (annotationCanvas.width / annotationCanvas.offsetWidth);
+                startY = (e.clientY - rect.top) * (annotationCanvas.height / annotationCanvas.offsetHeight);
+            });
+            annotationCanvas.addEventListener('mousemove', function(e) {
+                if (!isAnnotating) return;
+                const rect = annotationCanvas.getBoundingClientRect();
+                const x = (e.clientX - rect.left) * (annotationCanvas.width / annotationCanvas.offsetWidth);
+                const y = (e.clientY - rect.top) * (annotationCanvas.height / annotationCanvas.offsetHeight);
+                annotationCtx.clearRect(0, 0, annotationCanvas.width, annotationCanvas.height);
+                annotationCtx.strokeStyle = 'red';
+                annotationCtx.lineWidth = 3;
+                annotationCtx.strokeRect(startX, startY, x - startX, y - startY);
+            });
+            annotationCanvas.addEventListener('mouseup', function(e) {
+                isAnnotating = false;
+            });
+        });
+
+        clearAnnotateBtn.addEventListener('click', function() {
+            if (annotationCanvas) {
+                annotationCanvas.remove();
+                annotationCanvas = null;
+                annotationCtx = null;
+                clearAnnotateBtn.style.display = 'none';
+            }
+        });
+
+        // Add a new button for sending PDF report via email after prediction
+        let sendEmailBtn = document.createElement('button');
+        sendEmailBtn.textContent = 'Send PDF Report to Email';
+        sendEmailBtn.style.display = 'none';
+        sendEmailBtn.style.marginTop = '10px';
+        sendEmailBtn.style.padding = '8px 16px';
+        sendEmailBtn.style.borderRadius = '6px';
+        sendEmailBtn.style.border = 'none';
+        sendEmailBtn.style.background = '#00c6ff';
+        sendEmailBtn.style.color = '#fff';
+        sendEmailBtn.style.fontWeight = 'bold';
+        sendEmailBtn.style.cursor = 'pointer';
+        document.querySelector('.container').appendChild(sendEmailBtn);
+
+        function showSendEmailBtn() {
+            sendEmailBtn.style.display = 'inline-block';
+        }
+        function hideSendEmailBtn() {
+            sendEmailBtn.style.display = 'none';
+        }
+
+        // Show the button after prediction if email is entered
+        form.addEventListener('submit', function() {
+            setTimeout(() => {
+                const email = document.getElementById('emailInput').value;
+                if (email) showSendEmailBtn();
+                else hideSendEmailBtn();
+            }, 1000);
+        });
+
+        sendEmailBtn.addEventListener('click', async function() {
+            const email = document.getElementById('emailInput').value;
+            if (!email) {
+                alert('Please enter your email.');
+                return;
+            }
+            // Generate PDF with actual prediction
+            const { jsPDF } = window.jspdf;
+            let pdfBase64 = '';
+            if (downloadPdfBtn.style.display === 'inline-block') {
+                // Single
+                const doc = new jsPDF();
+                doc.setFontSize(18);
+                doc.text('Brain Tumor Prediction Report', 15, 20);
+                doc.setFontSize(12);
+                doc.text(`Date/Time: ${lastTime}`, 15, 32);
+                doc.text(`Diagnosis: ${lastDiagnosis}`, 15, 42);
+                doc.text(`Confidence: ${lastConfidence}`, 15, 52);
+                if (lastImage) {
+                    const imgProps = doc.getImageProperties(lastImage);
+                    let imgWidth = 60;
+                    let imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+                    doc.addImage(lastImage, 'JPEG', 15, 60, imgWidth, imgHeight);
+                }
+                const pdfBlob = doc.output('blob');
+                const reader = new FileReader();
+                reader.onloadend = async function() {
+                    pdfBase64 = reader.result.split(',')[1];
+                    await sendPdfToBackend(email, pdfBase64);
+                };
+                reader.readAsDataURL(pdfBlob);
+            } else if (downloadBatchPdfBtn.style.display === 'inline-block') {
+                // Batch
+                const doc = new jsPDF();
+                doc.setFontSize(18);
+                doc.text('Brain Tumor Batch Prediction Report', 15, 20);
+                doc.setFontSize(12);
+                let y = 32;
+                for (let i = 0; i < lastBatchResults.length; i++) {
+                    const res = lastBatchResults[i];
+                    doc.text(`Image ${i+1}:`, 15, y);
+                    doc.text(`Diagnosis: ${res.diagnosis}`, 30, y+10);
+                    doc.text(`Confidence: ${res.confidence}`, 30, y+20);
+                    if (res.image) {
+                        const imgProps = doc.getImageProperties(res.image);
+                        let imgWidth = 40;
+                        let imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+                        doc.addImage(res.image, 'JPEG', 30, y+25, imgWidth, imgHeight);
+                        y += imgHeight + 35;
+                    } else {
+                        y += 35;
+                    }
+                }
+                const pdfBlob = doc.output('blob');
+                const reader = new FileReader();
+                reader.onloadend = async function() {
+                    pdfBase64 = reader.result.split(',')[1];
+                    await sendPdfToBackend(email, pdfBase64);
+                };
+                reader.readAsDataURL(pdfBlob);
+            }
+        });
+
+        async function sendPdfToBackend(email, pdfBase64) {
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('pdf_base64', pdfBase64);
+            try {
+                const response = await fetch('http://127.0.0.1:5000/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) {
+                    alert('Failed to send PDF report to email.');
+                } else {
+                    alert('PDF report sent to your email!');
+                }
+            } catch (err) {
+                alert('Could not connect to server.');
+            }
+        }
+
+        // Modernize annotation: highlight selected image
+        previewContainer.addEventListener('click', function(e) {
+            if (e.target.tagName === 'IMG') {
+                Array.from(previewContainer.children).forEach(img => img.classList.remove('selected'));
+                e.target.classList.add('selected');
+            }
+        });
+    </script>
+</body>
+</html>

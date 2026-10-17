@@ -1,0 +1,20 @@
+numpy
+pandas
+matplotlib
+opencv-python
+
+
+python -m http.server 8000
+
+http://localhost:8000/upload_test.html
+
+Enhance the model: Try a deeper CNN, or use transfer learning with a pre-trained model like VGG16, ResNet, or MobileNet.
+Evaluate with a confusion matrix: This will show you exactly how many images are misclassified for each class.
+Cross-validation: Use k-fold cross-validation to better estimate model performance.
+Check for label noise: Manually inspect some images to ensure labels are correct.
+Would you like to:
+
+how to add data augmentation?
+a sample of a better CNN architecture?
+how to use transfer learning for this task?
+code to plot a confusion matrix for your test results?

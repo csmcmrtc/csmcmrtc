@@ -1,0 +1,28 @@
+# import matplotlib.pyplot as plt
+# plt.plot([1,2,3],[4,5,6])
+# plt.title('Sample Plot')
+# plt.xlabel('X')
+# plt.ylabel('Y')
+# plt.show()
+
+import matplotlib.pyplot as plt
+# give code for all operations in matplotlib
+plt.plot([1,2,3],[4,5,6])
+plt.title('Sample Plot')
+plt.xlabel('X') 
+plt.ylabel('Y') 
+plt.show()  
+plt.scatter([1,2,3],[4,5,6])
+plt.show()
+plt.bar([1,2,3],[4,5,6])
+plt.show()
+plt.hist([1,2,3,4,5,6])
+plt.show()
+plt.boxplot([1,2,3,4,5,6])
+plt.show()
+plt.pie([1,2,3], labels=['A','B','C'])
+plt.show()
+plt.fill_between([1,2,3],[4,5,6])
+plt.show()
+plt.imshow([[1,2],[3,4]])
+plt.show()
