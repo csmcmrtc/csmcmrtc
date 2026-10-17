@@ -1,0 +1,16 @@
+tensorflow-cpu==2.20.0
+numpy
+opencv-python
+gradio
+requests
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-WTF
+WTForms
+Flask-Bcrypt
+gunicorn
+Pillow
+Flask-SocketIO
+Flask-Mail
+itsdangerous

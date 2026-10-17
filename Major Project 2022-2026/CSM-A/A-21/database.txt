@@ -1,0 +1,38 @@
+create database saferide;
+use saferide;
+
+create table users(username varchar(40) primary key,
+password varchar(20),
+contact_no varchar(20),
+email varchar(50), 
+address varchar(65),
+vehicle_no varchar(45),
+usertype varchar(30));
+
+create table ride(ride_id int primary key,
+driver_name varchar(40),
+driver_location varchar(50),
+driver_latitude varchar(20),
+driver_longitude varchar(20), 
+passenger_name varchar(50),
+passenger_latitude varchar(20),
+passenger_longitude varchar(20),
+passenger_destination varchar(50),
+cost varchar(20),
+card_details varchar(50),
+ride_date varchar(30),
+status varchar(30));
+
+create table alert(ride_id varchar(20),
+passenger_name varchar(50),
+driver_name varchar(30),
+alert_latitude varchar(20),
+alert_longitude varchar(20),
+alert_date varchar(30));
+
+create table ratings(passenger_name varchar(40),
+driver_name varchar(50),
+feedback varchar(150),
+ratings varchar(10),
+feedback_date varchar(20));
+

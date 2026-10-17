@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESCUE | Women's Safety Platform</title>
+    <meta name="description" content="Immediate emergency safety platform for women. One-touch SOS, real-time location sharing, and nearby police assistance.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#C0392B">
+</head>
+<body>
+    <!-- Emergency Quick Dial Strip -->
+    <div class="emergency-strip">
+        <a href="tel:100" class="dial-item">🚔 Police</a>
+        <a href="tel:1091" class="dial-item">👮‍♀️ Women Helpline</a>
+        <a href="tel:112" class="dial-item">🆘 Emergency</a>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="glass-nav">
+        <div class="nav-content">
+            <h1 class="logo">RESCUE</h1>
+            <div class="nav-links">
+                <button onclick="showScreen('home')" class="nav-link active" id="nav-home">Home</button>
+                <button onclick="showScreen('contacts')" class="nav-link" id="nav-contacts">Contacts</button>
+            </div>
+        </div>
+    </nav>
+
+    <main id="app-container">
+        <!-- Screen 1: Home -->
+        <section id="screen-home" class="screen active">
+            <div class="hero">
+                <h2 class="hero-title">Your Safety, Our Priority.</h2>
+                <p class="hero-subtitle">Single tap to alert contacts and find help nearby.</p>
+            </div>
+            
+            <div class="sos-trigger-container">
+                <button id="main-sos-btn" class="sos-button-large" aria-label="Press to send SOS alert to your trusted contacts">
+                    <span class="sos-text">SOS</span>
+                    <div class="ripple-rings">
+                        <div class="ring"></div>
+                        <div class="ring"></div>
+                        <div class="ring"></div>
+                    </div>
+                </button>
+                <p class="sos-hint">Press if unsafe</p>
+                
+                <div id="cancel-zone" class="hidden">
+                    <button id="cancel-sos" class="cancel-btn" aria-label="Cancel the SOS alert within 5 seconds">
+                        CANCEL SOS
+                        <div id="cancel-timer-bar"></div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card" style="--delay: 0.1s" onclick="showScreen('home')">
+                    <div class="feature-icon">📍</div>
+                    <h3>Live GPS Tracking</h3>
+                    <p>Instantly capture and share your exact location with trusted contacts.</p>
+                </div>
+                <div class="feature-card" style="--delay: 0.2s" onclick="showScreen('contacts')">
+                    <div class="feature-icon">📢</div>
+                    <h3>Automated Alerts</h3>
+                    <p>Sends WhatsApp and SMS messages to all your emergency contacts.</p>
+                </div>
+                <div class="feature-card" style="--delay: 0.3s" onclick="showScreen('alert-sent')">
+                    <div class="feature-icon">🚔</div>
+                    <h3>Nearby Police</h3>
+                    <p>Find the closest police stations and get directions immediately.</p>
+                </div>
+            </div>
+
+            <div id="secure-context-warning" class="hidden">
+              <p class="warning-text">⚠️ <strong>Notice:</strong> Location services require <strong>HTTPS</strong>. Use a local server or secure hosting for full functionality.</p>
+            </div>
+        </section>
+
+        <!-- Screen 2: SOS Active (Overlay handled via CSS/JS transitions) -->
+        
+        <!-- Screen 3: Alert Sent -->
+        <section id="screen-alert-sent" class="screen">
+            <div class="alert-confirmation-card">
+                <div class="success-icon">✅</div>
+                <h2>Help is on the way</h2>
+                <p id="alert-timestamp"></p>
+                
+                <div class="location-box">
+                    <p class="label">Current Location:</p>
+                    <p id="current-address">Fetching location...</p>
+                    <p id="current-coords" class="coords-small"></p>
+                </div>
+
+                <div class="notified-contacts">
+                    <div class="notify-header">
+                        <h3>Contacts Notified</h3>
+                        <button class="btn-blast" onclick="blastAllContacts()">Blast All 🔥</button>
+                    </div>
+                    <ul id="notified-list"></ul>
+                    <p class="popup-advice">Tip: If only one contact opened, <strong>Allow Pop-ups</strong> in your browser settings to notify everyone at once.</p>
+                </div>
+
+                <div id="map-container">
+                    <div id="map"></div>
+                </div>
+
+                <button class="btn-primary" onclick="showScreen('home')">Return to Home</button>
+            </div>
+        </section>
+
+        <!-- Screen 4: Contacts -->
+        <section id="screen-contacts" class="screen">
+            <div class="contacts-header">
+                <h2>Trusted Contacts</h2>
+                <button id="add-contact-btn" class="btn-secondary">+ Add New</button>
+            </div>
+
+            <div id="contacts-list" class="contacts-grid">
+                <!-- Contact cards will be injected here -->
+            </div>
+
+            <div id="empty-contacts" class="hidden">
+                <div class="empty-state">
+                    <div class="icon">👥</div>
+                    <h3>No contacts added yet</h3>
+                    <p>Add up to 5 people you trust to receive your SOS alerts.</p>
+                    <button class="btn-primary" onclick="openAddModal()">Add First Contact</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <div id="contact-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title">Add Trusted Contact</h3>
+            <form id="contact-form">
+                <div class="form-group">
+                    <label for="contact-name">Name</label>
+                    <input type="text" id="contact-name" required placeholder="e.g. Mom">
+                </div>
+                <div class="form-group">
+                    <label for="contact-phone">Phone Number (with country code)</label>
+                    <input type="tel" id="contact-phone" required placeholder="+919876543210">
+                </div>
+                <div class="form-group">
+                    <label for="contact-relation">Relationship</label>
+                    <select id="contact-relation">
+                        <option value="Family">Family</option>
+                        <option value="Friend">Friend</option>
+                        <option value="Colleague">Colleague</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-flat" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Contact</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="js/location.js"></script>
+    <script src="js/contacts.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/alert.js"></script>
+    <script src="js/sos.js"></script>
+    <script>
+        // Screen management helper
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + screenId).classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            const navLink = document.getElementById('nav-' + screenId);
+            if (navLink) navLink.classList.add('active');
+            
+            // Map refresh if showing alert screen
+            if (screenId === 'alert-sent' && window.map) {
+                setTimeout(() => window.map.invalidateSize(), 100);
+            }
+        }
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker Registered'))
+                .catch(err => console.log('Service Worker Registration Failed', err));
+            });
+        }
+
+        // HTTPS Check
+        if (!window.isSecureContext) {
+          document.getElementById('secure-context-warning').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
